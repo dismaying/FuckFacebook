@@ -14,7 +14,8 @@ def display_banner():
 ==========================================================================================
                                                                                                                           
                                                                                                                           
-                                                By Ph4nToM00
-                                    GitHub : https://github.com/Ph4nToM00                                                                                                                       
+                                    By Ph4nToM00
+                    🖥️  GitHub : https://github.com/Ph4nToM00
+                    💵 Paypal : https://www.paypal.me/UnderRadio                                                                                                                      
 """
     return banner
