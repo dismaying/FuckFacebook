@@ -55,29 +55,30 @@ def main(URL_TOKEN):
 
     if "fill" in response.text:
         pass_the_captcha()
-
-    table = soup.find('table')
-
-    if table:
-        # Extract the data from the table
-        headers = [th.text.strip() for th in table.find_all('th')]
-        data = []
-        for row in table.find_all('tr')[1:]:
-            row_data = [td.text.strip() for td in row.find_all('td')]
-            data.append(row_data)
-
-        # Create a SingleTable object with the headers and data
-        table_instance = SingleTable([headers] + data)
-
-        # Make the table responsive based on the terminal size
-        table_instance.inner_heading_row_border = False
-        table_instance.inner_row_border = True
-        table_instance.justify_columns = {index: 'center' for index in range(len(headers))}
-
-        # Display the table
-        print(table_instance.table)
     else:
-        print("No Results.")
+
+        table = soup.find('table')
+
+        if table:
+            # Extract the data from the table
+            headers = [th.text.strip() for th in table.find_all('th')]
+            data = []
+            for row in table.find_all('tr')[1:]:
+                row_data = [td.text.strip() for td in row.find_all('td')]
+                data.append(row_data)
+
+            # Create a SingleTable object with the headers and data
+            table_instance = SingleTable([headers] + data)
+
+            # Make the table responsive based on the terminal size
+            table_instance.inner_heading_row_border = False
+            table_instance.inner_row_border = True
+            table_instance.justify_columns = {index: 'center' for index in range(len(headers))}
+
+            # Display the table
+            print(table_instance.table)
+        else:
+            print("No Results.")
 
 if __name__ == '__main__':
 
