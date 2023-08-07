@@ -6,10 +6,10 @@ import sys
 from colorama import Fore, Style
 from token_config import URL_TOKEN
 
-# Import the display_banner function from the banner.py file
+# Import de la fonction display_banner depuis le fichier banner.py
 from static.banner import display_banner
 
-# Display the banner with colors
+# Affichage de la bannière avec des couleurs
 print(Fore.RED + display_banner() + Style.RESET_ALL)
 
 def pass_the_captcha():
@@ -22,12 +22,12 @@ def pass_the_captcha():
     get_id = soup.find('input', {'name': 'id'}).get('value')
     print(get_captcha)
 
-    captcha = input("Enter the captcha: ")
+    captcha = input("Entrez le captcha: ")
     url_captcha = "{}captcha".format(url_index)
 
     datas = {
-    "captcha": captcha,
-    "id": get_id
+        "captcha": captcha,
+        "id": get_id
     }
     
     req_captcha = requests.post(url_captcha, verify=False, data=datas)
@@ -35,22 +35,20 @@ def pass_the_captcha():
         replace_token.write("""URL_TOKEN = "{}" """.format(req_captcha.url.split("=")[-1]))
     main(req_captcha.url.split("=")[-1])
 
-
-
 def main(URL_TOKEN):
-    # Filter out empty parameters
+    # Filtrage des paramètres vides
     filtered_params = {key: value for key, value in params.items() if value}
 
-    # Build the search URL with the filtered parameters
+    # Construction de l'URL de recherche avec les paramètres filtrés
     search_url = "http://4wbwa6vcpvcr3vvf4qkhppgy56urmjcj2vagu2iqgp3z656xcmfdbiqd.onion.pet/search?" + "&".join(f"{key}={value}" for key, value in filtered_params.items())
 
-    # Add the fixed parameters to the search URL
+    # Ajout des paramètres fixes à l'URL de recherche
     search_url += "&s={}&r=*any*&g=*any*".format(URL_TOKEN)
 
-    # Perform the search request
+    # Effectuer la requête de recherche
     response = requests.get(search_url, verify=False, allow_redirects=True)
 
-    # Process the response with BeautifulSoup
+    # Traitement de la réponse avec BeautifulSoup
     soup = BeautifulSoup(response.content, 'html.parser')
 
     if "fill" in response.text:
@@ -60,44 +58,53 @@ def main(URL_TOKEN):
         table = soup.find('table')
 
         if table:
-            # Extract the data from the table
+            # Extraction des données de la table
             headers = [th.text.strip() for th in table.find_all('th')]
             data = []
             for row in table.find_all('tr')[1:]:
                 row_data = [td.text.strip() for td in row.find_all('td')]
                 data.append(row_data)
 
-            # Create a SingleTable object with the headers and data
+            # Création d'un objet SingleTable avec les en-têtes et les données
             table_instance = SingleTable([headers] + data)
 
-            # Make the table responsive based on the terminal size
+            # Rendre la table responsive en fonction de la taille du terminal
             table_instance.inner_heading_row_border = False
             table_instance.inner_row_border = True
             table_instance.justify_columns = {index: 'center' for index in range(len(headers))}
 
-            # Display the table
+            # Affichage de la table
             print(table_instance.table)
+
+            # Ajout d'un espace et d'un titre
+            print("\nDirect Link to Facebook profile:\n")
+
+            # Affichage des URL de profils Facebook en utilisant les ID de la table
+            for row in data:
+                fb_url = f"https://www.facebook.com/profile.php?id={row[0]}"
+                print(fb_url)
+
         else:
-            print("No Results.")
+            print("Aucun résultat.")
 
 if __name__ == '__main__':
 
-    # Parser for command line arguments
-    parser = argparse.ArgumentParser(description='Tool For Search information From dump facebook')
+    # Analyseur pour les arguments de la ligne de commande
+    parser = argparse.ArgumentParser(description='Outil pour rechercher des informations dans un dump Facebook')
     parser.add_argument('-i', '--id', help='ID')
-    parser.add_argument('-f', '--firstname', help='firstname')
-    parser.add_argument('-l', '--lastname', help='lastname')
-    parser.add_argument('-t', '--phone', help='phone')
-    parser.add_argument('-w', '--work', help='work')
-    parser.add_argument('-o', '--location', help='location')
+    parser.add_argument('-f', '--firstname', help='prénom')
+    parser.add_argument('-l', '--lastname', help='nom de famille')
+    parser.add_argument('-t', '--phone', help='téléphone')
+    parser.add_argument('-w', '--work', help='travail')
+    parser.add_argument('-o', '--location', help='localisation')
     args = parser.parse_args()
 
-    # Check if no arguments were provided
+    # Vérification si aucun argument n'a été fourni
     if not any(vars(args).values()):
         parser.print_help()
         sys.exit(1)
 
-    # Build the search parameters for the URL
+    # Construction des paramètres de recherche pour l'URL
     params = {
         'i': args.id if args.id else '',
         'f': args.firstname if args.firstname else '',
