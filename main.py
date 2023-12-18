@@ -10,6 +10,7 @@ import os
 from static.banner import display_banner
 import socks
 import socket
+from tqdm import tqdm
 
 # Configure the socket to use Tor
 socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 9050)  # 9050 est le port par défaut de Tor
@@ -72,13 +73,18 @@ def main(URL_TOKEN, max_results=None):
 
     # Handle CAPTCHA if presented
     if "fill" in response.text:
+        # Use tqdm for the progress bar
+        for _ in tqdm(range(10), desc="Processing before CAPTCHA", unit="step"):
+            time.sleep(0.1)
         pass_the_captcha()
     else:
         table = soup.find('table')
         if table:
             headers = [th.text.strip() for th in table.find_all('th')]
             data = []
-            for row in table.find_all('tr')[1:]:
+
+            # Use tqdm for the progress bar
+            for row in tqdm(table.find_all('tr')[1:], desc="Processing rows", unit="row"):
                 row_data = [td.text.strip() for td in row.find_all('td')]
                 data.append(row_data)
 
