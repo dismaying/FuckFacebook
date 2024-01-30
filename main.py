@@ -5,7 +5,6 @@ from terminaltables import SingleTable
 import sys
 import time
 from colorama import Fore, Style
-from token_config import URL_TOKEN
 import os
 from static.banner import display_banner
 import socks
@@ -15,6 +14,22 @@ from tqdm import tqdm
 # Configure the socket to use Tor
 socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 9050)  # 9050 est le port par défaut de Tor
 socket.socket = socks.socksocket
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def save_results(data):
+    if not data:
+        print("No data to save.")
+        return
+
+    save = input("\nDo you want to save the results to a file? (y/n): ").lower()
+    if save == 'y':
+        filename = input("\nEnter filename to save results to: ")
+        with open(filename, 'w') as file:
+            for row in data:
+                file.write(','.join(row) + '\n')
+        print(f"Results saved to {filename}")
 
 # Display banner on startup
 banner_lines = display_banner()
@@ -35,7 +50,7 @@ def adjust_table_width(table_instance):
     table_instance.column_max_width = {index: column_width - 3 for index in range(num_columns)}
 
 def pass_the_captcha():
-    """Handles the CAPTCHA challenge for the given onion website."""
+    """Handles the CAPTCHA challenge for the given onion website and returns URL_TOKEN."""
     url_index = "http://4wbwa6vcpvcr3vvf4qkhppgy56urmjcj2vagu2iqgp3z656xcmfdbiqd.onion/"
     req = requests.get(url_index, verify=False, proxies={'http': 'socks5h://localhost:9050', 'https': 'socks5h://localhost:9050'})
     soup = BeautifulSoup(req.text, "html.parser")
@@ -52,12 +67,12 @@ def pass_the_captcha():
     }
 
     req_captcha = requests.post(url_captcha, verify=False, data=datas, proxies={'http': 'socks5h://localhost:9050', 'https': 'socks5h://localhost:9050'})
-    with open("token_config.py", "w") as replace_token:
-        replace_token.write("""URL_TOKEN = "{}" """.format(req_captcha.url.split("=")[-1]))
-    main(req_captcha.url.split("=")[-1])
+    return req_captcha.url.split("=")[-1]  # Extract and return URL_TOKEN
 
-def main(URL_TOKEN, max_results=None):
-    """Main function to scrape and display data from the onion website."""
+def main(URL_TOKEN=None, max_results=None):
+    """Main function to scrape and display data from the onion website"""
+    URL_TOKEN = pass_the_captcha()  # Get URL_TOKEN
+
     # Filter out parameters that are empty
     filtered_params = {key: value for key, value in params.items() if value}
     search_url = "http://4wbwa6vcpvcr3vvf4qkhppgy56urmjcj2vagu2iqgp3z656xcmfdbiqd.onion/search?" + "&".join(f"{key}={value}" for key, value in filtered_params.items())
@@ -103,8 +118,9 @@ def main(URL_TOKEN, max_results=None):
             for row in data:
                 fb_url = f"https://www.facebook.com/profile.php?id={row[0]}"
                 print(fb_url)
+            save_results(data)
         else:
-            print("No results found.")
+            print("\nNo results found.")
 
 if __name__ == '__main__':
     # Parse arguments from the command line
@@ -117,6 +133,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--location', help='Location')
     parser.add_argument('-m', '--max-results', type=int, help='Maximum number of results to display')
     args = parser.parse_args()
+    clear_screen()
 
     # Check if any arguments were provided
     if not any(vars(args).values()):
@@ -132,4 +149,4 @@ if __name__ == '__main__':
         'w': args.work if args.work else '',
         'o': args.location if args.location else ''
     }
-    main(URL_TOKEN, max_results=args.max_results)
+    main(URL_TOKEN=None, max_results=args.max_results)
