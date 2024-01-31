@@ -1,7 +1,6 @@
 # FuckFacebook
 
-![Exemple](https://i.postimg.cc/zfD3NP9T/fuckfb-1.png)
-
+![Example](https://i.postimg.cc/dVWk6f6L/image.jpg)
 
 Osint tools for information retrieval via facebook (Python 3.X)
 
@@ -11,7 +10,7 @@ Osint tools for information retrieval via facebook (Python 3.X)
 # Installation
 ``` 
 
-      install tor proxy on your 
+      Install tor proxy on your chaine:
 
       # MacOS :
          - brew install tor
