@@ -23,7 +23,7 @@ def display_banner():
         "                          │ By Ph4nToM00 │                          ",
         "                          └──────────────┘                          ",
         "                    Paypal: paypal.me/UnderRadio                    ",
-	"               Github: https://github.com/Ph4nToM00                 ", 
+        "               Github: https://github.com/Ph4nToM00                 ",
     ]
 
     terminal_width = get_terminal_width()
