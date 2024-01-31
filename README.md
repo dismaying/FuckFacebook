@@ -10,7 +10,7 @@ Osint tools for information retrieval via facebook (Python 3.X)
 # Installation
 ``` 
 
-      Install tor proxy on your chaine:
+      Install tor proxy on your machine:
 
       # MacOS :
          - brew install tor
