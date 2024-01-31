@@ -31,12 +31,6 @@ def save_results(data):
                 file.write(','.join(row) + '\n')
         print(f"Results saved to {filename}")
 
-# Display banner on startup
-banner_lines = display_banner()
-for line in banner_lines:
-    print(Fore.RED + line + Style.RESET_ALL)
-    time.sleep(0.1)
-
 def get_terminal_width():
     """Get the current width of the terminal."""
     rows, columns = os.popen('stty size', 'r').read().split()
@@ -67,7 +61,8 @@ def pass_the_captcha():
     }
 
     req_captcha = requests.post(url_captcha, verify=False, data=datas, proxies={'http': 'socks5h://localhost:9050', 'https': 'socks5h://localhost:9050'})
-    return req_captcha.url.split("=")[-1]  # Extract and return URL_TOKEN
+    return req_captcha.url.split("=")[-1]
+
 
 def main(URL_TOKEN=None, max_results=None):
     """Main function to scrape and display data from the onion website"""
@@ -122,6 +117,12 @@ def main(URL_TOKEN=None, max_results=None):
         else:
             print("\nNo results found.")
 
+clear_screen()
+banner_lines = display_banner()
+for line in banner_lines:
+    print(Fore.RED + line + Style.RESET_ALL)
+    time.sleep(0.1)
+
 if __name__ == '__main__':
     # Parse arguments from the command line
     parser = argparse.ArgumentParser(description='Tool to search for information in a Facebook dump')
@@ -133,7 +134,6 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--location', help='Location')
     parser.add_argument('-m', '--max-results', type=int, help='Maximum number of results to display')
     args = parser.parse_args()
-    clear_screen()
 
     # Check if any arguments were provided
     if not any(vars(args).values()):
