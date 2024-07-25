@@ -19,7 +19,7 @@ Osint tools for information retrieval via facebook (Python 3.X)
       # Linux :
          - https://justhackerthings.com/post/using-tor-from-the-command-line/
 
-       git clone https://github.com/Ph4nToM00/FuckFacebook.git 
+       git clone https://github.com/dismaying/FuckFacebook.git 
 
        cd FuckFacebook
 
